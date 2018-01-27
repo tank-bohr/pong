@@ -25,11 +25,15 @@ module Pong
     end
 
     attr_reader :width, :height, :state
+    attr_reader :beep, :pickup_coin
     attr_reader :player_left, :player_right, :ball
 
     def initialize(width:, height:)
       @width = width
       @height = height
+
+      @beep = Gosu::Sample.new("media/beep.wav")
+      @pickup_coin = Gosu::Sample.new("media/pickup_coin.wav")
     end
 
     def bootstrap
@@ -89,10 +93,16 @@ module Pong
     end
 
     def ball_collision(position)
-      return :vertical if (0 > position.y) || (position.y > height - Ball::SIZE[:height])
-      return :horizontal if left_player_collision?(position) || right_player_collision?(position)
-
-      exit if (position.x < 0) || (position.x > width)
+      if (0 > position.y) || (position.y > height - Ball::SIZE[:height])
+        pickup_coin.play
+        :vertical
+      elsif left_player_collision?(position) || right_player_collision?(position)
+        beep.play
+        :horizontal
+      elsif out?(position)
+        # Gosu::Sample.new("media/explosion.wav").play
+        exit
+      end
     end
 
     def left_player_collision?(position)
@@ -102,6 +112,10 @@ module Pong
     def right_player_collision?(position)
       (width - Player::SIZE[:width] <= position.x + Ball::SIZE[:width]) \
         && player_right.catch?(position.y)
+    end
+
+    def out?(position)
+      (position.x < 0) || (position.x > width)
     end
   end
 end

@@ -1,0 +1,3 @@
+media/beep.wav filter=lfs binary
+media/explosion.wav filter=lfs binary
+media/pickup_coin.wav filter=lfs binary

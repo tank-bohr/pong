@@ -3,7 +3,7 @@ require 'gosu'
 module Pong
   class Player
 
-    SIZE = { width: 10, height: 50 }.freeze
+    SIZE = { width: 10, height: 100 }.freeze
     COLOR = Gosu::Color::WHITE
     DIRECTIONS = { up: -1, down: 1 }.freeze
 
