@@ -3,9 +3,9 @@ require 'gosu'
 module Pong
   class Player
 
-    SIZE = { width: 10, height: 50 }
+    SIZE = { width: 10, height: 50 }.freeze
     COLOR = Gosu::Color::WHITE
-    FACTORS = { up: -1, down: 1 }
+    DIRECTIONS = { up: -1, down: 1 }.freeze
 
     attr_reader :game, :position, :velocity
 
@@ -15,8 +15,12 @@ module Pong
       @velocity = velocity
     end
 
+    def catch?(y)
+      (position.y < y) && (y < position.y + SIZE[:height])
+    end
+
     def move(direction)
-      factor = FACTORS.fetch(direction, 0)
+      factor = DIRECTIONS.fetch(direction, 0)
       dy = factor * velocity
       new_y = position.y + dy
       if game.fits_y?(new_y)

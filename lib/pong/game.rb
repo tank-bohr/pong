@@ -52,7 +52,13 @@ module Pong
       velocity = 10
       @player_left = Player.new(self, position: left_player_position, velocity: velocity)
       @player_right = Player.new(self, position: right_player_position, velocity: velocity)
-      @ball = Ball.new(position: ball_position, direction: nil, velocity_factor: 0)
+      @ball = Ball.new(
+        self,
+        position: ball_position,
+        # FIXME: randomize direction
+        direction: Position.new(x: 1, y: 1),
+        velocity: 2
+      )
     end
 
     def update
@@ -80,6 +86,22 @@ module Pong
 
     def fits_y?(y)
       (0 < y) && (y < height - Player::SIZE[:height])
+    end
+
+    def ball_collision(position)
+      return :vertical if (0 > position.y) || (position.y > height - Ball::SIZE[:height])
+      return :horizontal if left_player_collision?(position) || right_player_collision?(position)
+
+      exit if (position.x < 0) || (position.x > width)
+    end
+
+    def left_player_collision?(position)
+      (Player::SIZE[:width] >= position.x) && player_left.catch?(position.y)
+    end
+
+    def right_player_collision?(position)
+      (width - Player::SIZE[:width] <= position.x + Ball::SIZE[:width]) \
+        && player_right.catch?(position.y)
     end
   end
 end
